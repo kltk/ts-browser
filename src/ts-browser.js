@@ -1,6 +1,5 @@
 
 import {b64EncodeUnicode} from "./utils.js";
-import {addPathToUrl} from "./UrlPathResolver.js";
 import WorkerManager from "./WorkerManager.js";
 import {tryEvalLegacyJsModule} from "./sideEffectModules/sideEffectUtils.js";
 
@@ -137,9 +136,8 @@ const LoadRootModule = async ({
         return cachedFiles;
     };
 
-    const importDynamic = async (relUrl, baseUrl) => {
+    const importDynamic = async (url) => {
         try {
-            const url = addPathToUrl(relUrl, baseUrl);
             await fetchDependencyFiles(url);
             return await loadModuleFromFiles(url, cachedFiles);
         } catch (exc) {
@@ -151,7 +149,7 @@ const LoadRootModule = async ({
 
     const main = async () => {
         window[IMPORT_DYNAMIC] = importDynamic;
-        return importDynamic(rootModuleUrl, './');
+        return importDynamic(rootModuleUrl);
     };
 
     return main();
